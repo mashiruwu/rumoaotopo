@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano de Formação de Voluntários | #PartiuRumoAoTopo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Earthy Harmony -->
+    <!-- Application Structure Plan: Foi utilizada uma estrutura de Single-Page Application (SPA) com uma barra de navegação lateral fixa. Esta arquitetura foi escolhida para transformar um relatório denso e linear num painel de exploração interativo e não-linear. O utilizador pode aceder diretamente a qualquer secção do plano (Perfil, Jornada, Dinâmicas, etc.), o que facilita a consulta de informações específicas e a apresentação da proposta a diferentes stakeholders. A navegação constante e visível na lateral oferece um "mapa" claro do conteúdo, melhorando a usabilidade em comparação com um longo scroll. -->
+    <!-- Visualization & Content Choices: 
+        - Matriz de Competências (Secção 1) -> Tabela HTML Interativa: Objetivo de organizar e informar. Uma tabela estilizada com hover-effects para facilitar a leitura e associação entre atividades e competências. (HTML/Tailwind)
+        - Cronograma de Formação (Secção 2) -> Linha do Tempo Vertical com Acordeão: Objetivo de mostrar a progressão temporal. Cada semana é um item clicável que revela detalhes das atividades síncronas e assíncronas, mantendo a visão geral limpa. (HTML/Tailwind/JS)
+        - Adaptação de Dinâmicas (Secção 3) -> Cartões com Toggle (Presencial/Online): Objetivo de comparar. A interação de clique para alternar entre as duas versões de cada dinâmica oferece uma comparação direta e impactante, reforçando o conceito de "reimaginar" do relatório. (HTML/Tailwind/JS)
+        - Gamificação (Secção 4) -> Galeria de Emblemas: Objetivo de informar e engajar. A apresentação visual dos emblemas torna o conceito de gamificação mais concreto e apelativo do que uma lista. (HTML/Tailwind/Unicode)
+        - Modelo Kirkpatrick (Secção 6) -> Stepper Vertical e Gráfico de Donut: Objetivo de organizar e informar. O stepper apresenta os 4 níveis de forma progressiva. Um gráfico Chart.js (Donut) foi adicionado para visualizar dados sobre os focos de avaliação, dando um destaque quantitativo a uma das conclusões do relatório. (HTML/Tailwind/JS/Chart.js)
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .chart-container { position: relative; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto; height: 320px; max-height: 400px; }
+        .nav-link.active { background-color: #0d9488; color: white; }
+        .content-section { display: none; }
+        .content-section.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .dynamic-toggle-btn.active-toggle { background-color: #0d9488; color: white; }
+        .dynamic-content { display: none; }
+        .dynamic-content.active { display: block; }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <aside class="w-full md:w-64 bg-stone-100 p-4 md:p-6 border-b md:border-r border-stone-200">
+            <header class="mb-8">
+                <h1 class="text-2xl font-bold text-teal-700">#PartiuRumoAoTopo</h1>
+                <p class="text-sm text-stone-500">Plano de Formação de Facilitadores</p>
+            </header>
+            <nav id="main-nav">
+                <ul class="space-y-2">
+                    <li><a href="#visao-geral" class="nav-link block w-full text-left px-4 py-2 rounded-md text-stone-600 hover:bg-teal-50 hover:text-teal-700 transition-colors">Visão Geral</a></li>
+                    <li><a href="#perfil-facilitador" class="nav-link block w-full text-left px-4 py-2 rounded-md text-stone-600 hover:bg-teal-50 hover:text-teal-700 transition-colors">Perfil do Facilitador</a></li>
+                    <li><a href="#jornada-formacao" class="nav-link block w-full text-left px-4 py-2 rounded-md text-stone-600 hover:bg-teal-50 hover:text-teal-700 transition-colors">Jornada de Formação</a></li>
+                    <li><a href="#adaptacao-dinamicas" class="nav-link block w-full text-left px-4 py-2 rounded-md text-stone-600 hover:bg-teal-50 hover:text-teal-700 transition-colors">Adaptação de Dinâmicas</a></li>
+                    <li><a href="#engajamento-comunidade" class="nav-link block w-full text-left px-4 py-2 rounded-md text-stone-600 hover:bg-teal-50 hover:text-teal-700 transition-colors">Engajamento & Comunidade</a></li>
+                    <li><a href="#acessibilidade" class="nav-link block w-full text-left px-4 py-2 rounded-md text-stone-600 hover:bg-teal-50 hover:text-teal-700 transition-colors">Acessibilidade</a></li>
+                    <li><a href="#avaliacao-impacto" class="nav-link block w-full text-left px-4 py-2 rounded-md text-stone-600 hover:bg-teal-50 hover:text-teal-700 transition-colors">Avaliação de Impacto</a></li>
+                    <li><a href="#plano-acao" class="nav-link block w-full text-left px-4 py-2 rounded-md text-stone-600 hover:bg-teal-50 hover:text-teal-700 transition-colors">Plano de Ação</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main id="main-content" class="flex-1 p-4 md:p-10">
+            
+            <section id="visao-geral" class="content-section">
+                <h2 class="text-3xl font-bold mb-4">Capacitando os Guias da Escalada</h2>
+                <p class="text-lg text-stone-600 mb-6">Esta plataforma interativa apresenta o plano estratégico para a transição da formação de facilitadores do projeto #PartiuRumoAoTopo para um modelo online. O objetivo é criar uma jornada de aprendizagem escalável, acessível e profundamente eficaz, que capacite os voluntários a se tornarem os pilares de sustentação da experiência dos jovens. Navegue pelas seções ao lado para explorar cada componente do nosso plano, desde a definição das competências essenciais até o método de avaliação de impacto.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                        <h3 class="font-bold text-teal-700 text-xl mb-2">A Oportunidade do Online</h3>
+                        <p class="text-stone-600">A transição para um modelo de formação online não é uma limitação, mas uma oportunidade estratégica. Ganhamos em escalabilidade, consistência e acessibilidade, permitindo que voluntários de diferentes localidades participem, eliminando barreiras geográficas e otimizando o tempo de todos.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                        <h3 class="font-bold text-teal-700 text-xl mb-2">Filosofia Híbrida</h3>
+                        <p class="text-stone-600">Adotamos um modelo de blended learning, combinando o melhor de dois mundos: estudo autônomo e flexível (assíncrono) para absorção de teoria, e encontros ao vivo (síncronos) focados em prática, feedback e construção de comunidade.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="perfil-facilitador" class="content-section">
+                <h2 class="text-3xl font-bold mb-4">O Perfil do Facilitador Ideal</h2>
+                <p class="text-lg text-stone-600 mb-6">Para guiar os jovens na "escalada", o facilitador voluntário precisa de um conjunto integrado de competências. Esta seção detalha os conhecimentos, habilidades e atitudes essenciais para o sucesso nesta função. A matriz abaixo serve como um roteiro claro para o desenho do currículo de formação e para a avaliação do desenvolvimento dos facilitadores.</p>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 overflow-x-auto">
+                    <h3 class="font-bold text-xl mb-4 text-teal-700">Matriz de Competências</h3>
+                    <table class="w-full text-sm text-left text-stone-600">
+                        <thead class="text-xs text-teal-800 uppercase bg-teal-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 rounded-l-lg">Atividade da Oficina</th>
+                                <th scope="col" class="px-6 py-3">Conhecimentos (Saber)</th>
+                                <th scope="col" class="px-6 py-3">Habilidades (Saber Fazer)</th>
+                                <th scope="col" class="px-6 py-3 rounded-r-lg">Atitudes (Saber Ser)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-white border-b hover:bg-stone-50">
+                                <td class="px-6 py-4 font-medium">Oficina 1: Dinâmica do novelo</td>
+                                <td class="px-6 py-4">Teoria de contratos de grupo; interdependência.</td>
+                                <td class="px-6 py-4">Facilitação de grupo; comunicação clara.</td>
+                                <td class="px-6 py-4">Fomento de responsabilidade e confiança.</td>
+                            </tr>
+                            <tr class="bg-white border-b hover:bg-stone-50">
+                                <td class="px-6 py-4 font-medium">Oficina 1: Perfis Comportamentais</td>
+                                <td class="px-6 py-4">Domínio das características dos 4 perfis.</td>
+                                <td class="px-6 py-4">Explicação de conceitos; gestão do tempo.</td>
+                                <td class="px-6 py-4">Valorização da diversidade; empatia.</td>
+                            </tr>
+                            <tr class="bg-white border-b hover:bg-stone-50">
+                                <td class="px-6 py-4 font-medium">Oficina 2: Ilustrando Sonhos</td>
+                                <td class="px-6 py-4">Importância da visualização para a motivação.</td>
+                                <td class="px-6 py-4">Criação de ambiente inspirador; orientação.</td>
+                                <td class="px-6 py-4">Respeito pela individualidade; sensibilidade.</td>
+                            </tr>
+                            <tr class="bg-white border-b hover:bg-stone-50">
+                                <td class="px-6 py-4 font-medium">Oficina 3: Propósito</td>
+                                <td class="px-6 py-4">Conexão entre Talentos, Paixões, Valores e Sonhos.</td>
+                                <td class="px-6 py-4">Guiar reflexão profunda; fazer perguntas poderosas.</td>
+                                <td class="px-6 py-4">Paciência; autenticidade; inspiração.</td>
+                            </tr>
+                             <tr class="bg-white hover:bg-stone-50">
+                                <td class="px-6 py-4 font-medium">Oficina 4: Currículo e Entrevista</td>
+                                <td class="px-6 py-4">Melhores práticas de mercado.</td>
+                                <td class="px-6 py-4">Simulação de entrevistas; feedback construtivo.</td>
+                                <td class="px-6 py-4">Postura profissional e de apoio.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <section id="jornada-formacao" class="content-section">
+                <h2 class="text-3xl font-bold mb-4">A Jornada de Formação Online</h2>
+                <p class="text-lg text-stone-600 mb-6">Propomos um percurso de aprendizagem híbrido de 4 semanas, projetado para ser estruturado e progressivo. A jornada equilibra o aprendizado autônomo com a prática interativa em grupo, culminando em facilitadores confiantes e preparados. Clique em cada semana para explorar as atividades planejadas.</p>
+                <div id="timeline-container" class="space-y-4">
+                </div>
+            </section>
+            
+            <section id="adaptacao-dinamicas" class="content-section">
+                <h2 class="text-3xl font-bold mb-4">Do Físico ao Digital: Reimaginar Dinâmicas</h2>
+                <p class="text-lg text-stone-600 mb-6">A transição para o online não é sobre replicar, mas sobre reimaginar. O foco é preservar o objetivo central e o impacto emocional de cada atividade, utilizando as ferramentas digitais de forma criativa. Explore abaixo como as dinâmicas-chave são adaptadas. Clique nos botões para alternar entre a versão presencial e a adaptação online.</p>
+                <div id="dynamics-container" class="grid md:grid-cols-2 gap-6">
+                </div>
+            </section>
+            
+            <section id="engajamento-comunidade" class="content-section">
+                <h2 class="text-3xl font-bold mb-4">Engajamento e Espírito de Comunidade</h2>
+                 <p class="text-lg text-stone-600 mb-6">Para que a formação seja memorável, usamos estratégias que promovem um engajamento profundo e criam uma comunidade forte. Isso inclui quebra-gelos com propósito, o poder do storytelling e a gamificação da jornada, transformando o aprendizado numa aventura recompensadora.</p>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                    <h3 class="font-bold text-xl mb-4 text-teal-700">Gamificação: A Trilha do Facilitador</h3>
+                    <p class="text-stone-600 mb-6">Usamos mecânicas de jogo para aumentar a motivação e o engajamento. Os voluntários colecionam emblemas digitais ao atingir marcos de aprendizagem e habilidade, tornando o progresso visível e recompensador.</p>
+                    <div id="badges-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 text-center">
+                    </div>
+                </div>
+            </section>
+            
+            <section id="acessibilidade" class="content-section">
+                <h2 class="text-3xl font-bold mb-4">Acessibilidade e Inclusão Digital</h2>
+                <p class="text-lg text-stone-600 mb-6">Garantir que todos os voluntários, incluindo pessoas com deficiência, possam participar plenamente é uma premissa fundamental. Um ambiente de formação acessível beneficia a todos, promovendo comunicação mais clara e interfaces intuitivas. Esta seção detalha nosso compromisso e as boas práticas que serão implementadas.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                        <h3 class="font-bold text-xl mb-2 text-teal-700">Checklist de Práticas</h3>
+                        <ul class="space-y-3 text-stone-600">
+                            <li class="flex items-start"><span class="text-teal-600 font-bold mr-2">✓</span><span><b>Conteúdo Multimídia:</b> Todos os vídeos terão legendas precisas e todas as imagens, texto alternativo descritivo.</span></li>
+                            <li class="flex items-start"><span class="text-teal-600 font-bold mr-2">✓</span><span><b>Comunicação:</b> Uso de linguagem simples e descrição verbal de conteúdos visuais durante as sessões ao vivo.</span></li>
+                            <li class="flex items-start"><span class="text-teal-600 font-bold mr-2">✓</span><span><b>Múltiplos Canais:</b> Incentivo à participação por voz e chat, garantindo que todas as contribuições sejam integradas.</span></li>
+                            <li class="flex items-start"><span class="text-teal-600 font-bold mr-2">✓</span><span><b>Capacitação em Libras:</b> Oferta de um módulo introdutório à Língua Brasileira de Sinais para os facilitadores.</span></li>
+                        </ul>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200">
+                        <h3 class="font-bold text-xl mb-2 text-teal-700">Por que é Importante?</h3>
+                        <p class="text-stone-600 mb-4">Menos de 1% dos websites no Brasil são totalmente acessíveis. Ao adotar estas práticas de forma proativa, não estamos apenas a cumprir a lei, mas a modelar a cultura de inclusão que é central para a missão do #PartiuRumoAoTopo.</p>
+                        <blockquote class="border-l-4 border-teal-500 pl-4 text-stone-500 italic">"Acessibilidade como um direito, não um adicional."</blockquote>
+                    </div>
+                </div>
+            </section>
+
+            <section id="avaliacao-impacto" class="content-section">
+                <h2 class="text-3xl font-bold mb-4">Medindo o Sucesso da Formação</h2>
+                <p class="text-lg text-stone-600 mb-6">Para garantir a eficácia e a melhoria contínua, adotamos o Modelo Kirkpatrick, uma metodologia de avaliação de 4 níveis reconhecida mundialmente. Esta abordagem permite-nos medir desde a satisfação imediata dos voluntários até o impacto final da formação nos resultados do projeto.</p>
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <div class="flex-1">
+                         <div id="kirkpatrick-model" class="space-y-4">
+                         </div>
+                    </div>
+                    <div class="w-full lg:w-1/3">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 h-full">
+                            <h3 class="font-bold text-xl mb-4 text-teal-700 text-center">Foco da Avaliação de Programas</h3>
+                            <p class="text-sm text-stone-500 text-center mb-4">O Nível 4 (Resultados) é o mais estratégico, mas frequentemente o mais negligenciado. Nosso modelo garante que medimos o que realmente importa: o impacto na experiência dos jovens.</p>
+                            <div class="chart-container">
+                                <canvas id="kirkpatrickChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="plano-acao" class="content-section">
+                <h2 class="text-3xl font-bold mb-4">Checklist para Implementação</h2>
+                <p class="text-lg text-stone-600 mb-6">Para traduzir esta proposta em ação, recomendamos que a coordenação do projeto siga os seguintes passos estratégicos. Este plano de ação garante que a implementação seja estruturada, pilotada e otimizada para o sucesso.</p>
+                <div class="space-y-4">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 transition-all hover:shadow-md hover:border-teal-200">
+                        <h3 class="text-lg font-bold text-teal-700">1. Formalizar a Matriz de Competências</h3>
+                        <p class="text-stone-600 mt-1">Utilizar a Matriz de Competências como o documento orientador para o recrutamento, seleção e avaliação contínua dos facilitadores.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 transition-all hover:shadow-md hover:border-teal-200">
+                        <h3 class="text-lg font-bold text-teal-700">2. Investir em Ferramentas Digitais</h3>
+                        <p class="text-stone-600 mt-1">Adquirir as licenças necessárias para as ferramentas recomendadas (Zoom, Miro, etc.) para garantir o acesso a funcionalidades essenciais.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 transition-all hover:shadow-md hover:border-teal-200">
+                        <h3 class="text-lg font-bold text-teal-700">3. Pilotar o Programa de Formação</h3>
+                        <p class="text-stone-600 mt-1">Realizar um piloto do programa de 4 semanas com um pequeno grupo de voluntários para recolher feedback e refinar o conteúdo.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 transition-all hover:shadow-md hover:border-teal-200">
+                        <h3 class="text-lg font-bold text-teal-700">4. Estabelecer um Programa de Mentoria</h3>
+                        <p class="text-stone-600 mt-1">Criar um programa formal onde facilitadores experientes "apadrinham" os novos voluntários, oferecendo suporte e co-facilitando as primeiras oficinas.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-sm border border-stone-200 transition-all hover:shadow-md hover:border-teal-200">
+                        <h3 class="text-lg font-bold text-teal-700">5. Integrar o Ciclo de Avaliação e Reconhecimento</h3>
+                        <p class="text-stone-600 mt-1">Implementar sistematicamente o processo de avaliação Kirkpatrick e o sistema de gamificação para garantir a melhoria contínua e a motivação dos voluntários.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            function navigateTo(hash) {
+                const targetSection = document.querySelector(hash);
+                if (!targetSection) {
+                    console.warn(`Section not found for hash: ${hash}`);
+                    return;
+                }
+                
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.hash === hash);
+                });
+
+                contentSections.forEach(section => {
+                    section.classList.toggle('active', section.id === hash.substring(1));
+                });
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.hash = e.target.hash;
+                });
+            });
+            
+            window.addEventListener('hashchange', () => navigateTo(window.location.hash));
+
+            const initialHash = window.location.hash || '#visao-geral';
+            navigateTo(initialHash);
+
+            const timelineData = [
+                {
+                    week: 1,
+                    title: "Fundamentos e Oficina 1: Preparando a Escalada",
+                    async: "- Módulo 1: Filosofia do Projeto<br>- Módulo 2: Perfis Comportamentais<br>- Tutorial: Funções do Zoom/Meet<br>- Diário: Reflexão sobre perfil",
+                    sync: "- Quebra-gelo: 'Afinidades'<br>- Prática: Criar segurança psicológica<br>- Role-playing: 'Dinâmica do novelo' no Miro"
+                },
+                {
+                    week: 2,
+                    title: "Talentos, Sonhos e Oficina 2: A Mochila e o Sonho Alto",
+                    async: "- Módulo 3: Talentos e Pontos Fortes<br>- Módulo 4: A importância de Sonhar<br>- Tutorial: Miro/Jamboard<br>- Diário: Listar talentos e um sonho",
+                    sync: "- Quebra-gelo: '2 Verdades e 1 Mentira'<br>- Role-playing: 'Desafio da Batata' (virtual)<br>- Prática: Condução de meditação guiada"
+                },
+                {
+                    week: 3,
+                    title: "Propósito, Planejamento e Oficina 3: Motivação e Escalada",
+                    async: "- Módulo 5: Desvendando o Propósito<br>- Módulo 6: Modelo CANVAS<br>- Tutorial: Mentimeter/Kahoot<br>- Diário: Preenchimento da Folha de Quadrantes",
+                    sync: "- Quebra-gelo: 'Caça ao Tesouro em Casa'<br>- Role-playing: 'Travessia' (Escape Room virtual)<br>- Prática: Orientação em grupo do CANVAS"
+                },
+                {
+                    week: 4,
+                    title: "Mundo do Trabalho e Oficina 4: Chegando ao Topo",
+                    async: "- Módulo 7: CV e Entrevista<br>- Módulo 8: Acessibilidade e Inclusão<br>- Leitura: Guia de Comunicação Inclusiva<br>- Tarefa: Preparar um CV pessoal",
+                    sync: "- Role-playing: Simulação de entrevistas<br>- Painel: Conversa com facilitadores e ex-alunos<br>- Encerramento: Celebração e certificados"
+                },
+            ];
+            
+            const timelineContainer = document.getElementById('timeline-container');
+            timelineData.forEach(item => {
+                const element = document.createElement('div');
+                element.className = 'bg-white p-4 rounded-lg shadow-sm border border-stone-200';
+                element.innerHTML = `
+                    <button class="w-full text-left timeline-toggle">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-lg font-bold text-teal-700">Semana ${item.week}: ${item.title}</h4>
+                            <span class="text-teal-600 transform transition-transform duration-300">▼</span>
+                        </div>
+                    </button>
+                    <div class="timeline-content hidden mt-4 pt-4 border-t border-stone-200">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <h5 class="font-semibold mb-2">📚 Atividades Assíncronas (Auto-estudo)</h5>
+                                <div class="text-sm text-stone-600 space-y-1">${item.async}</div>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold mb-2">💻 Atividades Síncronas (Workshop ao Vivo)</h5>
+                                <div class="text-sm text-stone-600 space-y-1">${item.sync}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                timelineContainer.appendChild(element);
+            });
+
+            document.querySelectorAll('.timeline-toggle').forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = button.nextElementSibling;
+                    const icon = button.querySelector('span');
+                    content.classList.toggle('hidden');
+                    icon.classList.toggle('rotate-180');
+                });
+            });
+
+            const dynamicsData = [
+                {
+                    id: 'novelo',
+                    title: 'Dinâmica do Novelo',
+                    presencial: 'Usa um novelo de lã físico para criar uma teia, representando a interdependência do grupo de forma tátil.',
+                    online: 'Usa um quadro branco colaborativo (Miro/Jamboard). Cada participante cria um post-it e usa a ferramenta de linha para se conectar a outro, construindo uma "Teia de Compromissos" digital.'
+                },
+                {
+                    id: 'batata',
+                    title: 'Desafio da Batata',
+                    presencial: 'Equipes usam materiais físicos limitados (palitos, fita) para construir uma estrutura que proteja uma batata de uma queda.',
+                    online: 'É transformado num "Desafio de Design Virtual". Em breakout rooms, equipes usam um "kit digital" de formas e ícones no Canva/Miro para desenhar uma embalagem conceitual para um chip.'
+                },
+                {
+                    id: 'travessia',
+                    title: 'Travessia',
+                    presencial: 'Participantes, com olhos vendados, devem atravessar um "campo minado" com a ajuda dos colegas, focando em confiança e planejamento.',
+                    online: 'Reimaginado como um "Escape Room Virtual". Em equipes, os participantes resolvem enigmas baseados no conteúdo das oficinas (usando Google Forms ou Genially) para "chegar ao topo da montanha".'
+                },
+                {
+                    id: 'planejamento',
+                    title: 'Planejamento com a Bola',
+                    presencial: 'Grupo tenta passar uma bola entre todos o mais rápido possível, primeiro sem e depois com planejamento, comparando os tempos.',
+                    online: 'Adaptado para "A Corrida do Chat". Os participantes devem "passar a bola" digitando o nome do próximo na ordem numérica no chat. A diferença de tempo entre a tentativa sem e com planejamento é igualmente impactante.'
+                },
+            ];
+
+            const dynamicsContainer = document.getElementById('dynamics-container');
+            dynamicsData.forEach(item => {
+                const element = document.createElement('div');
+                element.className = 'bg-white p-6 rounded-lg shadow-sm border border-stone-200';
+                element.innerHTML = `
+                    <h4 class="text-lg font-bold text-teal-700 mb-3">${item.title}</h4>
+                    <div class="flex items-center justify-center space-x-2 mb-4">
+                        <button data-target="${item.id}-presencial" class="dynamic-toggle-btn active-toggle px-4 py-1 rounded-full text-sm font-medium transition-colors border border-gray-200">Presencial</button>
+                        <button data-target="${item.id}-online" class="dynamic-toggle-btn px-4 py-1 rounded-full text-sm font-medium transition-colors border border-gray-200">Online</button>
+                    </div>
+                    <div id="${item.id}-presencial" class="dynamic-content active text-sm text-stone-600">
+                        <p>${item.presencial}</p>
+                    </div>
+                    <div id="${item.id}-online" class="dynamic-content text-sm text-stone-600">
+                        <p>${item.online}</p>
+                    </div>
+                `;
+                dynamicsContainer.appendChild(element);
+            });
+            
+            document.querySelectorAll('.dynamic-toggle-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const parent = e.target.closest('.flex');
+                    parent.querySelectorAll('.dynamic-toggle-btn').forEach(btn => btn.classList.remove('active-toggle'));
+                    e.target.classList.add('active-toggle');
+                    
+                    const contentParent = e.target.closest('.bg-white');
+                    contentParent.querySelectorAll('.dynamic-content').forEach(content => content.classList.remove('active'));
+                    document.getElementById(e.target.dataset.target).classList.add('active');
+                });
+            });
+
+            const badgesData = [
+                { icon: '🧭', name: 'Explorador de Perfis' },
+                { icon: '🏆', name: 'Mestre do Miro' },
+                { icon: '💬', name: 'Guia de Conversa' },
+                { icon: '🛡️', name: 'Arquiteto de Segurança' },
+                { icon: '🎯', name: 'Planejador de Metas' },
+                { icon: '⭐', name: 'Sempre Presente' },
+                { icon: '💡', name: 'Inovador de Dinâmicas' },
+                { icon: '🤝', name: 'Mentor de Pares' },
+            ];
+            const badgesContainer = document.getElementById('badges-container');
+            badgesData.forEach(badge => {
+                const element = document.createElement('div');
+                element.className = 'flex flex-col items-center p-4 bg-stone-50 rounded-lg';
+                element.innerHTML = `
+                    <div class="text-4xl mb-2">${badge.icon}</div>
+                    <p class="text-xs font-semibold text-stone-600">${badge.name}</p>
+                `;
+                badgesContainer.appendChild(element);
+            });
+
+            const kirkpatrickData = [
+                 {
+                    level: 1,
+                    name: "Reação",
+                    question: "Eles gostaram da formação?",
+                    description: "Mede a satisfação e a percepção de relevância. Usaremos pesquisas de pulso anônimas após cada sessão e uma pesquisa final completa.",
+                },
+                {
+                    level: 2,
+                    name: "Aprendizagem",
+                    question: "Eles aprenderam?",
+                    description: "Avalia o ganho efetivo de conhecimentos e habilidades. Aplicaremos quizzes pré e pós-formação e avaliações práticas durante os role-playings.",
+                },
+                {
+                    level: 3,
+                    name: "Comportamento",
+                    question: "Eles aplicam o que aprenderam?",
+                    description: "Observa a transferência do aprendizado para a prática real. Faremos isso através de observação de pares, sessões de mentoria e autoavaliação guiada.",
+                },
+                {
+                    level: 4,
+                    name: "Resultados",
+                    question: "A formação gerou impacto no projeto?",
+                    description: "Mede o impacto final no sucesso do projeto. Analisaremos as avaliações dos jovens, depoimentos e métricas de engajamento do projeto.",
+                },
+            ];
+            
+            const kirkpatrickContainer = document.getElementById('kirkpatrick-model');
+            kirkpatrickData.forEach(item => {
+                 const element = document.createElement('div');
+                 element.className = 'bg-white p-4 rounded-lg shadow-sm border border-stone-200';
+                 element.innerHTML = `
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 bg-teal-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">${item.level}</div>
+                        <div>
+                            <h4 class="font-bold text-lg">${item.name}: <span class="font-normal italic text-stone-600">${item.question}</span></h4>
+                            <p class="text-sm text-stone-600 mt-1">${item.description}</p>
+                        </div>
+                    </div>
+                 `;
+                 kirkpatrickContainer.appendChild(element);
+            });
+
+            const ctx = document.getElementById('kirkpatrickChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Nível 1: Reação', 'Nível 2: Aprendizagem', 'Nível 3: Comportamento', 'Nível 4: Resultados'],
+                    datasets: [{
+                        label: 'Foco da Avaliação',
+                        data: [45, 30, 20, 5],
+                        backgroundColor: [
+                            'rgba(5, 150, 105, 0.7)',  // teal-600
+                            'rgba(13, 148, 136, 0.7)', // teal-700
+                            'rgba(15, 118, 110, 0.7)', // teal-800
+                            'rgba(249, 115, 22, 0.8)'  // orange-500 (destaque)
+                        ],
+                        borderColor: [
+                            'rgba(5, 150, 105, 1)',
+                            'rgba(13, 148, 136, 1)',
+                            'rgba(15, 118, 110, 1)',
+                            'rgba(249, 115, 22, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                             labels: {
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
